@@ -28,6 +28,7 @@ def compute_melgram(audio_path):
     logam = librosa.amplitude_to_db
     melgram = librosa.feature.melspectrogram
     ret = logam(melgram(y=src, sr=SR, hop_length=HOP_LEN, n_fft=N_FFT, n_mels=N_MELS), ref=np.max)
+    ret = ret[np.newaxis, :]
     return ret
 
 def data_read(directory=r"..\..\dataset\archive\Data\genres_original"):
@@ -54,6 +55,7 @@ def data_read(directory=r"..\..\dataset\archive\Data\genres_original"):
                 continue
             filename = os.path.join(dirname, filename)
             mel = compute_melgram(filename)
+
             label = classes[filename.split('\\')[6]]
 
             mels.append(mel)

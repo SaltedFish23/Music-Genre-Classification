@@ -55,7 +55,7 @@ def data_read(directory=r"..\..\dataset\archive\Data\genres_original"):
                 continue
             filename = os.path.join(dirname, filename)
             mel = compute_melgram(filename)
-
+            # TODO "数字指向类别，如'..\\blue\\blue0000.wav', 数字应为1"
             label = classes[filename.split('\\')[6]]
 
             mels.append(mel)

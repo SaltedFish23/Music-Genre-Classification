@@ -31,7 +31,8 @@ class Net(nn.Module):
         self.gru2 = nn.GRU(32, 32, batch_first=True)
         self.dropout5 = nn.Dropout(0.3)
         if include_top:
-            self.fc = nn.Linear(32, 50)
+            self.flatten = nn.Flatten()
+            self.fc = nn.Linear(448, 10)
             self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -63,6 +64,9 @@ class Net(nn.Module):
         x, _ = self.gru2(x)
         x = self.dropout5(x)
         if hasattr(self, 'fc'):
+            x = self.flatten(x)
+            x = self.flatten(x)
+            # print(x.shape)
             x = self.fc(x)
             x = self.sigmoid(x)
         return x
@@ -72,3 +76,4 @@ if __name__ == "__main__":
 
     model = Net(include_top=True)
     summary(model, (1, 96, 1366))
+    print(model(torch.randn(1, 1, 96, 1366)).shape)

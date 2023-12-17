@@ -55,8 +55,11 @@ def data_iter(train_data,test_data,batch_size=50): #输入张量
 def loss():
     return torch.nn.CrossEntropyLoss()
 
-def optimize(model,lr = 0.001):
+def optimize(model,lr = 0.001,weight_decay = 0):
     return torch.optim.SGD(model.parameters(),lr=lr,momentum=0.9)
+    #return torch.optim.Adam(model.parameters(),lr=lr)
+    #opt = torch.optim.AdamW(model.parameters(),lr=lr,weight_decay=weight_decay)
+    #return torch.optim.lr_scheduler.StepLR(optimizer = opt,step_size=step_size,gamma=gamma)
 
 def train_epoch(X,y,net,loss,optimizer,device): # return the loss and accuracy
     optimizer.zero_grad()
@@ -71,10 +74,12 @@ def train_epoch(X,y,net,loss,optimizer,device): # return the loss and accuracy
 def train(net,train_iter,test_iter,num_epochs,loss,optimizer,device): #visualise的初始化放在里面
     net.to(device)
     visualizer = visualize()
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer = optimizer,step_size=35,gamma=0.65)
     for epoch in range(num_epochs):
         metric = accumulator(3)
         for X,y in train_iter:
             metric.add(train_epoch(X,y,net,loss,optimizer,device))
+        scheduler.step()
         train_l = metric[0] / metric[2]
         train_acc = metric[1] / metric[2]
         test_acc = accuracy_test(net,test_iter)
@@ -104,10 +109,10 @@ def accuracy_test(net,data_iter,device=None):
             metric.add((accuracy(net(X), y), y.numel()))
     return metric[0] / metric[1]
 
-def save_model(net,path): #保存为.pth文件
+def save_model(net,path = r"..\models\alpha.pth"): #保存为.pth文件
     torch.save(net,path)
 
-def load_model(path,model):
+def load_model(path = r"..\models\alpha.pth"):
     model = torch.load(path)
     model.eval()
     return model

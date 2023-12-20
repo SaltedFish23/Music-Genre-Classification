@@ -77,7 +77,9 @@ if __name__ == "__main__":
     dataset = GTZANDataset(r"..\data\music\features_3_sec.csv")
     x = dataset(train="True")
     print(len(x))
-    print(x[1])
+    min_max = torch.load(r"..\models\min_max.pth")
+    print(min_max)
+    #print(x[1])
     '''data = pd.read_csv(r"..\data\music\features_3_sec.csv")
     for col in data.columns:
         print(col)

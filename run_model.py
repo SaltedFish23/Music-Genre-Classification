@@ -4,8 +4,19 @@ import librosa
 import numpy as np
 
 net = tools.load_model()
+min_max = torch.load(r"..\models\min_max.pth")
+classes = { 0 : 'blues',
+            1 : 'classical',
+            2 : 'country',
+            3 : 'disco',
+            4 : 'hiphop',
+            5 : 'jazz',
+            6 : 'metal',
+            7 : 'pop',
+            8 : 'reggae',
+            9 : 'rock'}
 
-y,sr = librosa.load(r"..\data\music\genres_original\blues\blues.00000.wav")
+y,sr = librosa.load(r"..\data\music\genres_original\country\country.00000.wav")
 chroma = librosa.feature.chroma_stft(y=y)
 rms = librosa.feature.rms(y=y)
 sc = librosa.feature.spectral_centroid(y=y)
@@ -41,6 +52,10 @@ for i in range(20):
     fea[j] = mfcc_mean[i]
     j += 1
     fea[j] = mfcc_var[i]
+    j += 1
+
+for i in range(57):
+    fea[i] = (fea[i] - min_max[i][0]) / (min_max[i][1] - min_max[i][0])
 
 fea = fea.astype(np.float32)
 fea = torch.from_numpy(fea)
@@ -48,4 +63,13 @@ fea = torch.unsqueeze(fea,dim = 0)
 fea = fea.cuda()
 net.to('cuda')
 
-print(net(fea))
+res = net(fea)
+pos_max = 0
+res_max = res[0][0]
+#print(res.size())
+for i in range(10):
+    if(res[0][i] > res_max):
+        pos_max = i
+        res_max = res[0][i]
+
+print(classes[pos_max])

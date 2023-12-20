@@ -2,6 +2,8 @@ import torch
 import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, random_split
+import librosa
+import librosa.display
 
 class my_dataset(Dataset):
 
@@ -77,7 +79,8 @@ if __name__ == "__main__":
     print(len(x))
     print(x[1])
     '''data = pd.read_csv(r"..\data\music\features_3_sec.csv")
-    print(data.shape)
+    for col in data.columns:
+        print(col)
     single_data = data.loc[1]
     single_label = data.loc[0, 'chroma_stft_mean' : 'mfcc20_var']
     single_label = single_label.to_numpy()
@@ -85,4 +88,5 @@ if __name__ == "__main__":
     tensor = torch.from_numpy(single_label)
     print(tensor.size())
     tensor = torch.reshape(tensor,(1,1,57))
-    print(tensor.size())'''
+    print(tensor.size())
+    zcr = librosa.feature.zero_crossing_rate'''

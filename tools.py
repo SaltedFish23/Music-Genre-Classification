@@ -112,8 +112,9 @@ def accuracy_test(net,data_iter,device=None):
 def save_model(net,path = r"..\models\alpha.pth"): #保存为.pth文件
     torch.save(net,path)
 
-def load_model(path = r"..\models\alpha.pth"):
+def load_model(path = r"..\models\beta 96.1%.pth"):
     model = torch.load(path)
+    model.to('cuda')
     model.eval()
     return model
 

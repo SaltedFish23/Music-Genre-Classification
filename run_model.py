@@ -16,7 +16,7 @@ classes = { 0 : 'blues',
             8 : 'reggae',
             9 : 'rock'}
 
-y,sr = librosa.load(r"..\data\music\genres_original\country\country.00000.wav")
+y,sr = librosa.load(r"..\data\music\genres_original\jazz\jazz.00020.wav")
 chroma = librosa.feature.chroma_stft(y=y)
 rms = librosa.feature.rms(y=y)
 sc = librosa.feature.spectral_centroid(y=y)
@@ -65,11 +65,19 @@ net.to('cuda')
 
 res = net(fea)
 pos_max = 0
-res_max = res[0][0]
-#print(res.size())
+res_max = torch.max(res)
+res_min = torch.min(res)
+res_max1 = res[0][0]
 for i in range(10):
-    if(res[0][i] > res_max):
+    if(res[0][i] > res_max1):
+        res_max1 = res[0][i]
         pos_max = i
-        res_max = res[0][i]
-
 print(classes[pos_max])
+
+for i in range(10):
+    res[0][i] = (res[0][i] - res_min) / (res_max - res_min)
+
+res_sum = torch.sum(res)
+for i in range(10):
+    print("%s : %f" %(classes[i],res[0][i] / res_sum))
+#print(res.size())
